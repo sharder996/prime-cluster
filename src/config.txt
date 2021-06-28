@@ -1,0 +1,5 @@
+starting_num:714100000000
+num_of_primes:27200845445
+current_indent:9
+file_suffix:668
+largest_prime:714099999979
