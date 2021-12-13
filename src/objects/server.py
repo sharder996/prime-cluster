@@ -1,4 +1,6 @@
+import gzip
 import json
+import re
 import select
 import socket
 import sys
@@ -51,7 +53,10 @@ class Server:
         for fds in outfds:
             if len(task_list) > 0 and fds is not self.s:
                 task = task_list[0]
-                fds.send(str.encode(json.dumps(task.__dict__)))
+                msg = str.encode(json.dumps(task.__dict__))
+                header = str.encode(str(len(msg)).zfill(HEADER_LENGTH))
+                fds.send(header)
+                fds.send(msg)
                 enqueued_list.append((task, datetime.now()))
                 del task_list[0]
                 self.inputs.append(fds)
@@ -62,25 +67,28 @@ class Server:
         infds, _, _ = select.select(self.inputs, [], [], 5)
         for fds in infds:
             if fds is not self.s:
-                msg_size = int(fds.recv(HEADER_LENGTH).decode("utf-8"))
+                msg_size = int(re.search(r'\d+', fds.recv(HEADER_LENGTH).decode("utf-8")).group())
+                # msg_size = int(fds.recv(HEADER_LENGTH).decode("utf-8"))
 
                 start = time.time()
 
-                msg = ""
+                msg = b''
                 while len(msg) != msg_size:
-                    msg += fds.recv(msg_size).decode("utf-8")
+                    # msg += fds.recv(msg_size).decode("utf-8")
+                    msg += fds.recv(msg_size)
 
                 end = time.time()
 
-                size = (msg_size/pow(1024,2))*8
-                rate = size/(end-start)
+                # size = (msg_size/pow(1024,2))*8
+                # rate = size/(end-start)
                 # print('Received {:,} bytes at {:f}Mbps'.format(msg_size, rate))
 
                 if len(msg) > 0:
                     if fds not in self.outputs:
                         self.outputs.append(fds)
                     self.inputs.remove(fds)
-                    received_list.append(msg)
+                    received_list.append(gzip.decompress(msg))
+                    # received_list.append(msg)
                 else:
                     if fds in self.outputs:
                         self.outputs.remove(fds)

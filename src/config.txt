@@ -1,5 +1,5 @@
-starting_num:714100000000
-num_of_primes:27200845445
-current_indent:9
-file_suffix:668
-largest_prime:714099999979
+starting_num:1251100000000
+num_of_primes:31107999982
+current_indent:6
+file_suffix:768
+largest_prime:1246805032699

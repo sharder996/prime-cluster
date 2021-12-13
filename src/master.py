@@ -8,7 +8,8 @@ from objects.server import Server
 from queue import Queue
 
 
-INTERVAL = 500000000   # Size of interval to check  #100000000#
+INTERVAL = 5000000000   # Size of interval to check  #100000000#
+# INTERVAL = 100000
 INDENT = 19  # Number to change how many numbers wide the primes are written
 JOB_TIME_LIMIT = 1200 # Number of seconds that the server will expect a client to finish a task in
 
@@ -82,8 +83,10 @@ def work():
 
 def send():
     while not exit_flag:
-        if queued_interval - current_interval < s.connections:
-            create_tasks(s.connections)
+        if len(task_queue) == 0:
+          create_tasks(s.connections)
+        # if queued_interval - current_interval < s.connections:
+        #     create_tasks(s.connections)
 
         for (task, time) in in_progress_tasks:
             if (datetime.now() - time).total_seconds() > JOB_TIME_LIMIT:
@@ -145,7 +148,7 @@ def create_tasks(count):
         queued_interval += 1
         lower = scheduled_num
         scheduled_num += INTERVAL
-        task = objects.Job(scheduled_num-1, lower, queued_interval)
+        task = objects.Job("compute", scheduled_num-1, lower, queued_interval)
         ordered_insert(task_queue, task)
 
 

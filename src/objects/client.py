@@ -34,7 +34,8 @@ class Client:
 
 
     def receive(self):
-        msg = self.s.recv(1024).decode("utf-8")
+        msg_size = int(self.s.recv(HEADER_LENGTH).decode("utf-8"))
+        msg = self.s.recv(msg_size).decode("utf-8")
         return msg
 
 

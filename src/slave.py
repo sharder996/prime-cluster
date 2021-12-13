@@ -2,12 +2,11 @@ import json
 import math
 import multiprocessing
 import time
-from objects.result import Result
+import objects
 from objects.client import Client
-from objects.job import Job
 
 
-c = Client(9998, "")
+c = Client(8000, "127.0.0.1")
 num_cores = multiprocessing.cpu_count()
 
 lower = None
@@ -30,7 +29,7 @@ def do_work():
         start = time.time()
         
         sieve(data.upper_limit, data.lower_limit)
-        msg = objects.Result(data.rank, build_msg(), data.upper_limit, data.lower_limit)
+        msg = objects.Result(data.op, data.rank, build_msg(), data.upper_limit, data.lower_limit)
 
         end = time.time()
 

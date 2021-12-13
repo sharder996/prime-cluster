@@ -1,0 +1,6 @@
+src/primes/
+src/objects/__pycache__/
+src/c_src/object/
+src/.idea/
+src/c_src/main
+.vscode/
